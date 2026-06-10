@@ -1,6 +1,7 @@
 import Globe from "react-globe.gl";
 import * as THREE from "three";
 import { getSunPosition, sunToDir } from "../utils/globe";
+import GlobeMosaic from "./GlobeMosaic";
 
 export default function GlobeView({
   globeRef,
@@ -25,6 +26,7 @@ export default function GlobeView({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
+      <GlobeMosaic />
       <div className="globe-overlay" aria-hidden="true" />
 
       {mapSize.width > 0 && mapSize.height > 0 && (
@@ -86,7 +88,9 @@ export default function GlobeView({
                   void main() {
                     float sun        = dot(vWorldNormal, sunDir);
                     float nightBlend = smoothstep(0.1, -0.1, sun);
-                    float u = 0.75 - atan(vWorldNormal.z, vWorldNormal.x) / (2.0 * 3.14159265);
+                    float angle = atan(vWorldNormal.z, vWorldNormal.x + 0.0001);
+                    float u = 0.75 - angle / (2.0 * 3.14159265);
+                    u = fract(u);
                     float v = asin(clamp(vWorldNormal.y, -1.0, 1.0)) / 3.14159265 + 0.5;
                     vec4 city = texture2D(nightTex, vec2(u, v));
                     gl_FragColor = vec4(city.rgb, nightBlend * 0.95);

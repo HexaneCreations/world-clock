@@ -1,6 +1,25 @@
+import { useEffect, useState } from "react";
+
 export default function Hero({ query, onQueryChange, viewMode, onViewModeChange }) {
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem("theme");
+    return saved ? saved === "dark" : true;
+  });
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("light", !isDark);
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+  }, [isDark]);
+
   return (
     <header className="hero">
+      <button
+        className="theme-toggle"
+        onClick={() => setIsDark((d) => !d)}
+        title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      >
+        {isDark ? "☀️" : "🌙"}
+      </button>
       <h1><span style={{ color: "var(--accent)" }}>Now</span>Here</h1>
       <p>The world's pulse, right now, right here.</p>
       <div className="hero-features">

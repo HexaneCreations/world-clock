@@ -5,7 +5,7 @@ import useGlobe from "./hooks/useGlobe";
 
 import { cityCatalog, initialCityIds } from "./data/cities";
 import { parseOffsetMinutes, formatOffsetLabel }             from "./utils/time";
-import { fetchCardNews, fetchCardWeather, fetchCardMusic, fetchCardCountry, fetchCardPhotos } from "./utils/cardFetcher";
+import { fetchCardNews, fetchCardWeather, fetchCardMusic, fetchCardCountry, fetchCardPhotos, fetchCardWiki } from "./utils/cardFetcher";
 
 import Hero          from "./components/Hero";
 import GlobeView     from "./components/GlobeView";
@@ -109,7 +109,8 @@ function App() {
       }
       if (t === "more" && !prev.countryInfo && !prev.countryLoading) {
         fetchCardCountry(prev.city.regionCode, setCard);
-        return { ...prev, tab: "more", playingId: null, countryLoading: true };
+        fetchCardWiki(prev.city.city, setCard);
+        return { ...prev, tab: "more", playingId: null, countryLoading: true, wikiLoading: true };
       }
       return { ...prev, tab: t, playingId: null };
     });
@@ -128,7 +129,11 @@ function App() {
     setCard((prev) => prev ? { ...prev, playingId: null } : null);
   }, []);
 
+  const autoNextCooldown = useRef(false);
   const handleAutoNext = useCallback(() => {
+    if (autoNextCooldown.current) return;
+    autoNextCooldown.current = true;
+    setTimeout(() => { autoNextCooldown.current = false; }, 1500);
     setNowPlaying((prev) => {
       if (!prev?.items?.length) return null;
       const idx  = prev.items.findIndex((v) => v.id.videoId === prev.videoId);
@@ -154,7 +159,7 @@ function App() {
         onViewModeChange={setViewMode}
       />
 
-      <section className="map-panel" aria-label="3D globe preview">
+      <div className="map-panel">
         <div className="map-header">
           <h2>Interactive Globe</h2>
           <p>Click any city point to explore live news, music, weather, photos &amp; country info · Dots glow green in business hours</p>
@@ -184,7 +189,7 @@ function App() {
             onPlay={handlePlay}
           />
         )}
-      </section>
+      </div>
 
       <TZConverter
         allRecords={allRecords}

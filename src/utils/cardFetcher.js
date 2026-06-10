@@ -73,6 +73,13 @@ export function fetchCardWeather(point, setCard) {
     .then((r) => r.json())
     .then((data) => setCard((prev) => prev ? { ...prev, weather: data.current_weather ?? null, weatherLoading: false } : null))
     .catch(()    => setCard((prev) => prev ? { ...prev, weather: null,                          weatherLoading: false } : null));
+
+  fetch(
+    `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${point.latitude}&longitude=${point.longitude}&current=us_aqi,pm2_5,pm10`
+  )
+    .then((r) => r.json())
+    .then((data) => setCard((prev) => prev ? { ...prev, aqi: data.current ?? null } : null))
+    .catch(() => {});
 }
 
 export function fetchCardMusic(point, setCard) {
@@ -98,27 +105,51 @@ export function fetchCardPhotos(point, setCard) {
     .catch(() => setCard((prev) => prev ? { ...prev, photoItems: [], photoLoading: false, photoError: "error" } : null));
 }
 
+export function fetchCardCurrency(currencyCode, setCard) {
+  if (!currencyCode || currencyCode === "N/A") return;
+  fetch(`https://api.frankfurter.app/latest?from=${currencyCode}&to=USD,EUR,GBP,JPY,INR`)
+    .then((r) => r.json())
+    .then((data) => setCard((prev) =>
+      prev ? { ...prev, currencyRates: { base: currencyCode, rates: data.rates || {} } } : null
+    ))
+    .catch(() => {});
+}
+
+export function fetchCardWiki(city, setCard) {
+  fetch(
+    `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(city)}`
+  )
+    .then((r) => r.json())
+    .then((data) => setCard((prev) =>
+      prev ? { ...prev, wikiSummary: data.extract || null, wikiLoading: false } : null
+    ))
+    .catch(() => setCard((prev) => prev ? { ...prev, wikiSummary: null, wikiLoading: false } : null));
+}
+
 export function fetchCardCountry(regionCode, setCard) {
   fetch(`https://restcountries.com/v3.1/alpha/${regionCode}`)
     .then((r) => r.json())
     .then((data) => {
       const c = data[0];
+      const currencyCode = Object.keys(c.currencies ?? {})[0] ?? null;
       setCard((prev) =>
         prev
           ? {
               ...prev,
               countryInfo: {
-                flag:       c.flags?.svg ?? "",
-                capital:    c.capital?.[0] ?? "N/A",
-                population: c.population ?? 0,
-                currency:   Object.values(c.currencies ?? {})[0]?.name ?? "N/A",
-                languages:  Object.values(c.languages  ?? {}).slice(0, 3).join(", "),
-                region:     c.region ?? "N/A",
+                flag:         c.flags?.svg ?? "",
+                capital:      c.capital?.[0] ?? "N/A",
+                population:   c.population ?? 0,
+                currency:     Object.values(c.currencies ?? {})[0]?.name ?? "N/A",
+                currencyCode: currencyCode ?? "N/A",
+                languages:    Object.values(c.languages  ?? {}).slice(0, 3).join(", "),
+                region:       c.region ?? "N/A",
               },
               countryLoading: false,
             }
           : null
       );
+      if (currencyCode) fetchCardCurrency(currencyCode, setCard);
     })
     .catch(() => setCard((prev) => prev ? { ...prev, countryInfo: null, countryLoading: false } : null));
 }

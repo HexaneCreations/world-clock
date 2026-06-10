@@ -1,6 +1,6 @@
 import { formatPop } from "../../utils/weather";
 
-export default function MoreTab({ countryInfo, countryLoading }) {
+export default function MoreTab({ countryInfo, countryLoading, wikiSummary, wikiLoading, currencyRates }) {
   if (countryLoading) {
     return <div className="card-loading"><span className="spinner" />Loading…</div>;
   }
@@ -24,6 +24,23 @@ export default function MoreTab({ countryInfo, countryLoading }) {
           </div>
         ))}
       </div>
+      {currencyRates?.rates && Object.keys(currencyRates.rates).length > 0 && (
+        <div className="currency-rates">
+          <p className="currency-title">1 {currencyRates.base} =</p>
+          <div className="currency-grid">
+            {Object.entries(currencyRates.rates).map(([code, rate]) => (
+              <div key={code} className="currency-row">
+                <span>{code}</span>
+                <strong>{rate.toLocaleString(undefined, { maximumFractionDigits: 2 })}</strong>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {wikiLoading && <p className="wiki-summary wiki-loading"><span className="spinner" /></p>}
+      {!wikiLoading && wikiSummary && (
+        <p className="wiki-summary">{wikiSummary}</p>
+      )}
     </div>
   );
 }

@@ -13,6 +13,19 @@
   --good: #6fe8c8;
 }
 
+html.light {
+  --bg-1: #eef2fb;
+  --bg-2: #dde6f8;
+  --bg-3: #ccd9f2;
+  --card: rgba(255, 255, 255, 0.75);
+  --card-stroke: rgba(100, 140, 220, 0.25);
+  --text-main: #0f1e3d;
+  --text-dim: #4a5d80;
+  --accent: #2e6fff;
+  --accent-violet: #6b4fff;
+  --good: #0d9e78;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -73,6 +86,28 @@ body {
 .hero {
   text-align: center;
   margin-bottom: 32px;
+  position: relative;
+}
+
+.theme-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: var(--card);
+  border: 1px solid var(--card-stroke);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.theme-toggle:hover {
+  background: rgba(122, 162, 255, 0.15);
 }
 
 .hero h1 {
@@ -109,12 +144,11 @@ body {
 }
 
 .hero-features {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, max-content);
   justify-content: center;
   gap: 8px;
   margin: 14px auto 0;
-  max-width: 560px;
 }
 
 .hero-feature-chip {
@@ -547,31 +581,29 @@ body {
   margin: 8px calc(50% - 50vw) 22px;
   border-radius: 0;
   padding: 20px clamp(14px, 3vw, 28px);
-  border: 1px solid rgba(164, 187, 248, 0.22);
-  background: linear-gradient(165deg, rgba(15, 23, 45, 0.82), rgba(10, 16, 30, 0.68));
-  box-shadow: 0 20px 34px rgba(3, 7, 15, 0.4);
+  border: none;
+  outline: none;
+  box-shadow: none;
+  background: linear-gradient(165deg, rgba(5, 9, 20, 0.98), rgba(4, 7, 16, 0.96));
 }
 
 .map-header h2 {
   margin: 0;
   font-size: 1rem;
+  color: rgba(230, 242, 255, 0.9);
 }
 
 .map-header p {
   margin: 6px 0 14px;
   font-size: 0.84rem;
-  color: var(--text-dim);
+  color: rgba(170, 195, 240, 0.72);
 }
 
 .map-canvas {
   position: relative;
   height: clamp(240px, 34vw, 430px);
-  border-radius: 16px;
-  border: 1px solid rgba(158, 184, 252, 0.2);
-  background:
-    radial-gradient(circle at 20% 35%, rgba(78, 119, 222, 0.2), transparent 34%),
-    radial-gradient(circle at 62% 52%, rgba(124, 96, 216, 0.2), transparent 42%),
-    linear-gradient(160deg, rgba(7, 12, 25, 0.92), rgba(12, 18, 35, 0.86));
+  border-radius: 0;
+  background: rgba(3, 5, 13, 1);
   overflow: hidden;
 }
 
@@ -585,7 +617,7 @@ body {
   width: 100%;
   height: 100%;
   display: block;
-  border-radius: 16px;
+  border-radius: 0;
   position: relative;
   z-index: 3;
   cursor: grab;
@@ -606,16 +638,7 @@ body {
 }
 
 .globe-canvas::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background-image:
-    linear-gradient(rgba(146, 172, 244, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(146, 172, 244, 0.08) 1px, transparent 1px);
-  background-size: 34px 34px;
-  mix-blend-mode: screen;
-  pointer-events: none;
+  display: none;
 }
 
 /* Globe wrapper — clips & centers globe in right 42% when expanded */
@@ -786,6 +809,24 @@ body {
   color: var(--text-dim);
 }
 
+.info-card-share {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid rgba(183, 204, 255, 0.24);
+  background: rgba(25, 34, 60, 0.9);
+  color: var(--accent);
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 180ms ease;
+}
+
+.info-card-share:hover {
+  background: rgba(50, 65, 110, 0.95);
+}
+
 .info-card-close {
   width: 26px;
   height: 26px;
@@ -840,6 +881,12 @@ body {
   min-height: 120px;
   overflow-y: auto;
   flex: 1;
+  animation: tabFadeIn 0.2s ease;
+}
+
+@keyframes tabFadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0);   }
 }
 
 /* ── Loading & Empty ─────────────────────────────────────────── */
@@ -1119,6 +1166,92 @@ body {
   font-weight: 600;
   text-align: right;
   max-width: 62%;
+}
+
+/* ── AQI ─────────────────────────────────────────────────────── */
+
+.aqi-row {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(122, 162, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.aqi-label {
+  font-size: 0.72rem;
+  color: #5a7090;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.aqi-value {
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.aqi-sub {
+  font-size: 0.72rem;
+  color: #6a82aa;
+}
+
+/* ── Currency Rates ──────────────────────────────────────────── */
+
+.currency-rates {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(122, 162, 255, 0.1);
+}
+
+.currency-title {
+  font-size: 0.72rem;
+  color: #5a7090;
+  margin: 0 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.currency-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+}
+
+.currency-row {
+  display: flex;
+  flex-direction: column;
+  background: rgba(122, 162, 255, 0.06);
+  border-radius: 7px;
+  padding: 5px 8px;
+}
+
+.currency-row span {
+  font-size: 0.68rem;
+  color: #6a82aa;
+}
+
+.currency-row strong {
+  font-size: 0.82rem;
+  color: #c8d8f0;
+  font-weight: 600;
+}
+
+/* ── Wikipedia Summary ───────────────────────────────────────── */
+
+.wiki-summary {
+  font-size: 0.78rem;
+  color: #8a9fbe;
+  line-height: 1.55;
+  margin: 10px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid rgba(122, 162, 255, 0.1);
+}
+
+.wiki-loading {
+  display: flex;
+  align-items: center;
+  min-height: 20px;
 }
 
 /* ── Photos Tab ──────────────────────────────────────────────── */
@@ -1438,8 +1571,72 @@ body {
     margin-bottom: 24px;
   }
 
+  .hero-features {
+    gap: 6px;
+  }
+
+  .hero-feature-chip {
+    font-size: 0.72rem;
+    padding: 3px 9px;
+  }
+
+  .theme-toggle {
+    width: 30px;
+    height: 30px;
+    font-size: 0.85rem;
+  }
+
+  /* InfoCard full-width on mobile */
+  .info-card {
+    position: fixed;
+    left: 8px !important;
+    right: 8px !important;
+    bottom: 0 !important;
+    top: auto !important;
+    width: auto !important;
+    border-radius: 18px 18px 0 0;
+    max-height: 80vh;
+  }
+
+  .info-card-tabs {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .info-card-tabs::-webkit-scrollbar { display: none; }
+
+  /* FloatingPlayer full-width on mobile */
+  .floating-player {
+    left: 8px !important;
+    right: 8px !important;
+    bottom: 8px !important;
+    width: auto !important;
+  }
+
+  /* TZ converter stack on mobile */
+  .tz-converter-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .tz-arrow {
+    transform: rotate(90deg);
+    align-self: center;
+  }
+
   .clock-grid {
     grid-template-columns: 1fr;
+  }
+
+  /* Photo grid 2-col on mobile */
+  .photo-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Currency grid 2-col on mobile */
+  .currency-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .fab {
@@ -1451,4 +1648,357 @@ body {
     right: 14px;
     bottom: 82px;
   }
+}
+
+/* ── Globe mosaic background ─────────────────────────────────────── */
+
+.globe-mosaic {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+@keyframes mosaicScrollRight {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+
+.globe-mosaic-row {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+  width: max-content;
+}
+
+.globe-mosaic-row-1 {
+  animation: mosaicScrollRight 32s linear infinite;
+}
+
+.globe-mosaic-row-2 {
+  animation: mosaicScrollRight 25s linear infinite;
+}
+
+.globe-mosaic-cell {
+  flex-shrink: 0;
+  width: clamp(240px, 22vw, 380px);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.globe-mosaic-cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.38) saturate(1.4);
+  transform: scale(1.05);
+  display: block;
+}
+
+/* ── Light mode component overrides ─────────────────────────────── */
+
+html.light .ambient {
+  opacity: 0.18;
+}
+
+/* Clock dials */
+html.light .dial-ring {
+  border-color: rgba(60, 100, 200, 0.35);
+  background: radial-gradient(circle at 35% 28%, rgba(200, 220, 255, 0.4), rgba(100, 140, 210, 0.12));
+}
+
+html.light .dial-ring.inner {
+  border-color: rgba(60, 100, 200, 0.2);
+}
+
+html.light .dial-mark {
+  background: rgba(30, 60, 140, 0.65);
+}
+
+html.light .dial-center {
+  background: #1a3a7e;
+  box-shadow: 0 0 0 3px rgba(47, 111, 255, 0.25);
+}
+
+html.light .hour-hand {
+  background: #0f1e3d;
+}
+
+html.light .minute-hand {
+  background: #2a4a8e;
+}
+
+html.light .second-hand {
+  background: #2e6fff;
+}
+
+/* Clock cards */
+html.light .card-front {
+  background: linear-gradient(170deg, rgba(235, 243, 255, 0.97), rgba(218, 232, 255, 0.93));
+}
+
+html.light .card-back {
+  background: linear-gradient(145deg, rgba(225, 238, 255, 0.98), rgba(208, 226, 255, 0.99));
+}
+
+html.light .clock-card {
+  box-shadow: 0 12px 28px rgba(30, 60, 140, 0.12);
+}
+
+html.light .clock-card:hover {
+  box-shadow: 0 20px 36px rgba(30, 60, 140, 0.2), 0 0 28px rgba(47, 111, 255, 0.12);
+}
+
+html.light .back-city-name,
+html.light .back-local-time {
+  color: var(--text-main);
+}
+
+html.light .biz-advice {
+  color: var(--text-dim);
+}
+
+html.light .remove-city {
+  background: rgba(195, 215, 245, 0.9);
+  border-color: rgba(100, 140, 210, 0.4);
+  color: #2a3a6e;
+}
+
+html.light .remove-city:hover {
+  background: rgba(165, 198, 240, 0.95);
+  color: #0f1e3d;
+}
+
+html.light .timezone,
+html.light .back-offset-badge {
+  background: rgba(47, 111, 255, 0.1);
+  border-color: rgba(47, 111, 255, 0.24);
+  color: #1a3a7e;
+}
+
+html.light .date {
+  color: #5a70a0;
+}
+
+html.light .flip-hint {
+  color: rgba(50, 75, 130, 0.38);
+}
+
+/* Search + toggles */
+html.light .search-wrap input {
+  background: rgba(208, 228, 255, 0.75);
+  border-color: rgba(100, 140, 210, 0.35);
+}
+
+html.light .search-wrap input:focus {
+  background: rgba(208, 228, 255, 0.95);
+  border-color: rgba(47, 111, 255, 0.55);
+  box-shadow: 0 0 0 4px rgba(47, 111, 255, 0.1), 0 22px 48px rgba(30, 60, 120, 0.1);
+}
+
+html.light .view-toggle {
+  background: rgba(208, 228, 255, 0.72);
+  border-color: rgba(100, 140, 210, 0.3);
+}
+
+html.light .view-toggle button {
+  color: #4a5d80;
+}
+
+html.light .view-toggle button.active {
+  color: #0f1e3d;
+  background: linear-gradient(135deg, rgba(47, 111, 255, 0.22), rgba(107, 79, 255, 0.18));
+}
+
+/* InfoCard */
+html.light .info-card {
+  background: rgba(238, 246, 255, 0.98);
+  border-color: rgba(100, 140, 220, 0.3);
+  box-shadow: 0 20px 40px rgba(30, 60, 130, 0.13), 0 0 0 1px rgba(47, 111, 255, 0.07);
+}
+
+html.light .info-card-city {
+  color: var(--text-main);
+}
+
+html.light .info-card-close,
+html.light .info-card-share,
+html.light .info-card-expand {
+  background: rgba(195, 218, 252, 0.85);
+  border-color: rgba(100, 140, 210, 0.35);
+  color: #2a3a6e;
+}
+
+html.light .info-card-close:hover,
+html.light .info-card-share:hover,
+html.light .info-card-expand:hover {
+  background: rgba(162, 198, 248, 0.95);
+  color: #0f1e3d;
+}
+
+html.light .info-card-tabs button {
+  border-color: rgba(100, 140, 210, 0.3);
+  color: #4a6090;
+}
+
+html.light .info-card-tabs button:hover:not(:disabled) {
+  background: rgba(47, 111, 255, 0.08);
+  color: #1a3a7e;
+}
+
+html.light .info-card-tabs button.active {
+  background: linear-gradient(135deg, rgba(47, 111, 255, 0.18), rgba(107, 79, 255, 0.14));
+  border-color: rgba(47, 111, 255, 0.38);
+  color: #0f1e3d;
+}
+
+/* News / Music lists */
+html.light .news-title {
+  color: #1a2a4e;
+}
+
+html.light .news-channel {
+  color: #5a6e90;
+}
+
+html.light .news-thumb {
+  background: rgba(175, 200, 240, 0.5);
+}
+
+html.light .news-item:hover {
+  background: rgba(47, 111, 255, 0.07);
+}
+
+html.light .news-item.playing {
+  background: rgba(47, 111, 255, 0.1);
+}
+
+/* Loading / empty states */
+html.light .card-loading {
+  color: #4a6080;
+}
+
+html.light .card-empty {
+  color: #4a6080;
+}
+
+/* Weather */
+html.light .weather-temp {
+  color: var(--text-main);
+}
+
+html.light .weather-label {
+  color: #5a6e90;
+}
+
+html.light .weather-stat {
+  background: rgba(195, 218, 252, 0.55);
+  border-color: rgba(100, 140, 210, 0.22);
+}
+
+html.light .weather-stat span {
+  color: #5a6e90;
+}
+
+html.light .weather-stat strong {
+  color: #1a2a4e;
+}
+
+html.light .aqi-label,
+html.light .aqi-sub {
+  color: #5a6e90;
+}
+
+/* Country / More tab */
+html.light .country-stat-row strong {
+  color: #1a2a4e;
+}
+
+html.light .currency-title {
+  color: #5a6e90;
+}
+
+html.light .currency-row {
+  background: rgba(47, 111, 255, 0.06);
+}
+
+html.light .currency-row span {
+  color: #5a6e90;
+}
+
+html.light .currency-row strong {
+  color: #1a2a4e;
+}
+
+html.light .wiki-summary {
+  color: #4a608a;
+}
+
+/* TZ Converter */
+html.light .tz-converter {
+  background: linear-gradient(170deg, rgba(222, 236, 255, 0.88), rgba(208, 228, 255, 0.72));
+}
+
+html.light .tz-city select {
+  background: rgba(208, 228, 255, 0.85) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a5d80' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center;
+  border-color: rgba(100, 140, 210, 0.35);
+}
+
+html.light .tz-offset {
+  background: rgba(47, 111, 255, 0.1);
+  border-color: rgba(47, 111, 255, 0.22);
+  color: #1a3a7e;
+}
+
+/* Floating player */
+html.light .floating-player {
+  background: rgba(225, 238, 255, 0.97);
+  border-color: rgba(100, 140, 210, 0.35);
+  box-shadow: 0 8px 40px rgba(30, 60, 140, 0.18), 0 0 0 1px rgba(47, 111, 255, 0.07);
+}
+
+html.light .fp-header {
+  border-bottom-color: rgba(100, 140, 210, 0.18);
+}
+
+html.light .fp-btn {
+  background: rgba(195, 218, 252, 0.85);
+  border-color: rgba(100, 140, 210, 0.35);
+  color: #2a3a6e;
+}
+
+html.light .fp-btn:hover {
+  background: rgba(162, 198, 248, 0.95);
+  border-color: rgba(47, 111, 255, 0.5);
+  color: #0f1e3d;
+}
+
+html.light .fp-btn-stop {
+  border-color: rgba(210, 70, 60, 0.3);
+  color: #b03020;
+}
+
+html.light .fp-btn-stop:hover {
+  background: rgba(200, 70, 60, 0.15);
+  border-color: rgba(200, 60, 60, 0.5);
+  color: #7a1a10;
+}
+
+/* City panel */
+html.light .city-panel {
+  background: rgba(225, 238, 255, 0.96);
+  border-color: rgba(100, 140, 210, 0.3);
+}
+
+html.light .city-actions button {
+  background: rgba(195, 218, 252, 0.7);
+  border-color: rgba(100, 140, 210, 0.35);
+  color: #2a3a6e;
+}
+
+html.light .city-actions button:hover {
+  background: rgba(162, 198, 248, 0.9);
+  border-color: rgba(47, 111, 255, 0.5);
 }

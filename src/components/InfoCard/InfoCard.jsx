@@ -1,3 +1,4 @@
+import { useState } from "react";
 import NewsTab    from "./NewsTab";
 import MusicTab   from "./MusicTab";
 import WeatherTab from "./WeatherTab";
@@ -13,6 +14,16 @@ const TABS = [
 ];
 
 export default function InfoCard({ card, onClose, onTabClick, onPlay }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = () => {
+    const url = `${window.location.origin}${window.location.pathname}?city=${encodeURIComponent(card.city.id)}`;
+    navigator.clipboard?.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
   return (
     <div className="info-card">
       <div className="info-card-header">
@@ -21,6 +32,9 @@ export default function InfoCard({ card, onClose, onTabClick, onPlay }) {
           <span className="info-card-country">{card.city.country}</span>
         </div>
         <div className="info-card-header-actions">
+          <button className="info-card-share" onClick={handleShare} title="Copy link">
+            {copied ? "✓" : "⤴"}
+          </button>
           <button className="info-card-close" onClick={onClose} aria-label="Close">×</button>
         </div>
       </div>
@@ -37,7 +51,7 @@ export default function InfoCard({ card, onClose, onTabClick, onPlay }) {
         ))}
       </div>
 
-      <div className="info-card-body">
+      <div className="info-card-body" key={card.tab}>
         {card.tab === "news"    && (
           <NewsTab
             newsItems={card.newsItems}
@@ -59,7 +73,7 @@ export default function InfoCard({ card, onClose, onTabClick, onPlay }) {
           />
         )}
         {card.tab === "weather" && (
-          <WeatherTab weather={card.weather} weatherLoading={card.weatherLoading} />
+          <WeatherTab weather={card.weather} weatherLoading={card.weatherLoading} aqi={card.aqi} />
         )}
         {card.tab === "photos"  && (
           <PhotosTab
@@ -70,7 +84,13 @@ export default function InfoCard({ card, onClose, onTabClick, onPlay }) {
           />
         )}
         {card.tab === "more"    && (
-          <MoreTab countryInfo={card.countryInfo} countryLoading={card.countryLoading} />
+          <MoreTab
+            countryInfo={card.countryInfo}
+            countryLoading={card.countryLoading}
+            wikiSummary={card.wikiSummary}
+            wikiLoading={card.wikiLoading}
+            currencyRates={card.currencyRates}
+          />
         )}
       </div>
     </div>
