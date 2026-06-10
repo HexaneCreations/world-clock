@@ -107,7 +107,7 @@ export function fetchCardPhotos(point, setCard) {
 
 export function fetchCardCurrency(currencyCode, setCard) {
   if (!currencyCode || currencyCode === "N/A") return;
-  fetch(`https://api.frankfurter.app/latest?from=${currencyCode}&to=USD,EUR,GBP,JPY,INR`)
+  fetch(`https://api.frankfurter.dev/v1/latest?from=${currencyCode}&to=USD,EUR,GBP,JPY,INR`)
     .then((r) => r.json())
     .then((data) => setCard((prev) =>
       prev ? { ...prev, currencyRates: { base: currencyCode, rates: data.rates || {} } } : null
